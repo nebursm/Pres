@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>DDP - Reproducible Pitch Presentation</title>
+  <meta charset="utf-8">
+  <meta name="description" content="DDP - Reproducible Pitch Presentation">
+  <meta name="author" content="Ruben Adad">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="../../librariesNew/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="../../librariesNew/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="../../librariesNew/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="../../librariesNew/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  <link rel=stylesheet href="./assets/css/ribbons.css"></link>
+
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="../../librariesNew/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="../../librariesNew/frameworks/io2012/js/slides" 
+    src="../../librariesNew/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  <hgroup class="auto-fadein">
+    <h1>DDP - Reproducible Pitch Presentation</h1>
+    <h2></h2>
+    <p>Ruben Adad<br/></p>
+  </hgroup>
+  <article></article>  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <hgroup>
+    <h2>Portfolio analysis</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Assume we want to invest in 2 risky assets A and B that pays no dividends, where:</p>
+
+<ul>
+<li>\(R_A\) = simple return on asset A over month t = \(\frac{P_{At} - P_{At-1}}{P_{At-1}}\)
+
+<ul>
+<li>\(P_{At}\) is the price of asset A at the end of month t</li>
+</ul></li>
+<li>\(R_B\) = simple return on asset B over month t = \(\frac{P_{Bt} - P_{Bt-1}}{P_{Bt-1}}\)
+
+<ul>
+<li>\(P_{Bt}\) is the price of asset B at the end of month t</li>
+</ul></li>
+<li>\(W_0\) = amount of the investment</li>
+</ul>
+
+<p>We assume that \(R_A\) and \(R_B\) are independent and identically distributed random variables with \(N(\mu_i, \Sigma_i), i = A, B\)</p>
+
+<p>Invsetors usually:</p>
+
+<ul>
+<li>Like high expected returns \(E[R_i] = \mu_i\)</li>
+<li>Dislike high volatility \(var(R_i) = \sigma^2_i\)</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Expected returns</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>We choose 2 assets from the Mexican Stock Exchange (BMV), symbols &quot;<sup>MXX&quot;,</sup> &quot;CX&quot;. The first one is a composite index of the BMV, like the Dow Jones Industrial Average. The second is from CEMEX, a global building materials company.</p>
+
+<p>To estimate the expected returns:</p>
+
+<ul>
+<li>We read the historic monthly prices of both assets from YAHOO, beginning on Apr/1, 2012 and ending on Apr/30, 2015. </li>
+<li>We calculate the monthly return of each asset and from here we compute the mean and the standard deviation for each. The mean \(\mu_i\) is the expected return and the standard deviation \(\sigma_i\) represents the volatility or risk associated with asset i. </li>
+<li>Then we annualized \(\mu_i\) and \(\sigma_i\).</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-3" style="background:;">
+  <hgroup>
+    <h2>Portfolio composition</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li>\(x_A\) = share of investment in asset A = \(\frac{amt\:in\:A}{W_0}\)</li>
+<li>\(x_B\) = share of investment in asset B = \(\frac{amt\:in\:B}{W_0}\)</li>
+</ul>
+
+<p>Where \(x_A + x_B = 1\)</p>
+
+<ul>
+<li>When \(x_i > 0\) we have a long position, meaning we bougth \(x_i \times W_0\) of asset i.</li>
+<li>When \(x_i < 0\) we have a short position, meaning we borrow \(x_i \times W_0\) of asset i to sold it to leverage the investment in other asset. </li>
+</ul>
+
+<p>In general, we have long positions in assets where we expect an increase in its prices and short positions in assets where we expect its prices to decrease.</p>
+
+<p>The portfolio return is given by: \(R_p = x_A R_A + x_b R_B\)</p>
+
+<p>The portfolio risk is: \(\sigma^2_p = var(R_p) = x^2_A \sigma^2_A + x^2_B \sigma^2_B + 2x_A x_B \sigma_{AB}\)</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-4" style="background:;">
+  <hgroup>
+    <h2>Portfolio expected return and risk</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/unnamed-chunk-1-1.png" alt="plot of chunk unnamed-chunk-1"> </p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='Portfolio analysis'>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='Expected returns'>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='Portfolio composition'>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='Portfolio expected return and risk'>
+         4
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  
+  <!-- MathJax: Fall back to local if CDN offline but local image fonts are not supported (saves >100MB) -->
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        processEscapes: true
+      }
+    });
+  </script>
+  <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  <!-- <script src="https://c328740.ssl.cf1.rackcdn.com/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script> -->
+  <script>window.MathJax || document.write('<script type="text/x-mathjax-config">MathJax.Hub.Config({"HTML-CSS":{imageFont:null}});<\/script><script src="../../librariesNew/widgets/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"><\/script>')
+</script>
+<!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="../../librariesNew/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>

@@ -1,0 +1,121 @@
+---
+title       : DDP - Reproducible Pitch Presentation
+author      : Ruben Adad
+framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
+highlighter : highlight.js  # {highlight.js, prettify, highlight}
+hitheme     : tomorrow      # 
+url:
+#  lib: ../../libraries
+  lib: ../../librariesNew
+  assets: ../../assets
+widgets     : [mathjax]     # {mathjax, quiz, bootstrap}
+mode        : selfcontained # {standalone, draft}
+knit        : slidify::knit2slides
+
+---
+
+## Portfolio analysis
+
+Assume we want to invest in 2 risky assets A and B that pays no dividends, where:
+
+* $R_A$ = simple return on asset A over month t = $\frac{P_{At} - P_{At-1}}{P_{At-1}}$
+  + $P_{At}$ is the price of asset A at the end of month t
+* $R_B$ = simple return on asset B over month t = $\frac{P_{Bt} - P_{Bt-1}}{P_{Bt-1}}$
+  + $P_{Bt}$ is the price of asset B at the end of month t
+* $W_0$ = amount of the investment
+
+We assume that $R_A$ and $R_B$ are independent and identically distributed random variables with $N(\mu_i, \Sigma_i), i = A, B$
+
+Invsetors usually:
+* Like high expected returns $E[R_i] = \mu_i$
+* Dislike high volatility $var(R_i) = \sigma^2_i$
+
+--- .class #id 
+
+## Expected returns
+We choose 2 assets from the Mexican Stock Exchange (BMV), symbols "^MXX", "CX". The first one is a composite index of the BMV, like the Dow Jones Industrial Average. The second is from CEMEX, a global building materials company.
+
+To estimate the expected returns:
+* We read the historic monthly prices of both assets from YAHOO, beginning on Apr/1, 2012 and ending on Apr/30, 2015. 
+* We calculate the monthly return of each asset and from here we compute the mean and the standard deviation for each. The mean $\mu_i$ is the expected return and the standard deviation $\sigma_i$ represents the volatility or risk associated with asset i. 
+* Then we annualized $\mu_i$ and $\sigma_i$.
+
+---
+
+## Portfolio composition
+* $x_A$ = share of investment in asset A = $\frac{amt\:in\:A}{W_0}$
+* $x_B$ = share of investment in asset B = $\frac{amt\:in\:B}{W_0}$
+
+Where $x_A + x_B = 1$
+
+* When $x_i > 0$ we have a long position, meaning we bougth $x_i \times W_0$ of asset i.
+* When $x_i < 0$ we have a short position, meaning we borrow $x_i \times W_0$ of asset i to sold it to leverage the investment in other asset. 
+
+In general, we have long positions in assets where we expect an increase in its prices and short positions in assets where we expect its prices to decrease.
+
+The portfolio return is given by: $R_p = x_A R_A + x_b R_B$
+
+The portfolio risk is: $\sigma^2_p = var(R_p) = x^2_A \sigma^2_A + x^2_B \sigma^2_B + 2x_A x_B \sigma_{AB}$
+
+--- 
+
+## Portfolio expected return and risk
+
+```{r echo=FALSE, message=FALSE, results='hide', fig.height=7, fig.width=14}
+par(mfrow=c(1,2))
+text <- "The following plot shows different forms of splitting the investment \nbetween the 2 assets. Each combination yields different expected returns \nand risks over a period of 1 year. Usually the highest returns also have \nthe highest risk. The red vertical line shows the protfolio with minimum \nrisk for the selected assets. Also the points where the total investment \nis in only one of the assets is shown."
+textplot(text, cex=1, family="Comic Sans MS", mar=c(1,1,1,2), halign="left")
+
+library(tseries)
+library(PerformanceAnalytics)
+library(zoo)
+library(boot)
+
+bmv_prices = get.hist.quote(instrument="^MXX", start="2012-04-01", end="2015-04-30", quote="AdjClose",provider="yahoo", origin="1970-01-01",compression="m", retclass="zoo")
+cemex_prices = get.hist.quote(instrument="CX", start="2012-04-01", end="2015-04-30", quote="AdjClose",provider="yahoo", origin="1970-01-01",compression="m", retclass="zoo")
+index(bmv_prices) = as.yearmon(index(bmv_prices))
+index(cemex_prices) = as.yearmon(index(cemex_prices))
+
+# Create merged price data
+all_prices = merge(bmv_prices, cemex_prices)
+# Rename columns
+colnames(all_prices) = c("BMV", "CEMEX")
+
+simple_returns = diff(all_prices)/lag(all_prices, k=-1);
+
+# A portfolio of BMV (Bolsa Mexicana de Valores) and Cemex stock
+# The ratio BMV stock vs Cemex stock (adds up to 1)
+bmv_weights = seq(from=-1, to=2, by=0.1)
+cemex_weights = 1 - bmv_weights
+
+# Portfolio parameters
+mu_hat_annual = apply(simple_returns,2,mean)*12   
+sigma2_annual = apply(simple_returns,2,var)*12
+sigma_annual = sigma2_annual^0.5
+cov_mat_annual = cov(simple_returns)*12 
+cov_hat_annual = cov(simple_returns)[1,2]*12    
+rho_hat_annual = cor(simple_returns)[1,2]
+
+mu_bmv = mu_hat_annual["BMV"]
+mu_cemex = mu_hat_annual["CEMEX"]
+sigma2_bmv =  sigma2_annual["BMV"]
+sigma2_cemex = sigma2_annual["CEMEX"]
+sigma_bmv = sigma_annual["BMV"]
+sigma_cemex = sigma_annual["CEMEX"]
+sigma_bmv_cemex = cov_hat_annual
+rho_bmv_cemex = rho_hat_annual
+
+mu_portfolio =  bmv_weights*mu_bmv + cemex_weights*mu_cemex
+
+sigma2_portfolio =  bmv_weights^2 * sigma2_bmv + cemex_weights^2 * sigma2_cemex + 2 * bmv_weights * cemex_weights * sigma_bmv_cemex
+
+
+sigma_portfolio = sqrt(sigma2_portfolio)
+
+# Plotting the different portfolios
+plot(sigma_portfolio, mu_portfolio, type="b", pch=16, ylim=c(0, max(mu_portfolio)), xlim=c(0, max(sigma_portfolio)), xlab=expression(paste("Portfolio risk ", sigma[p])), ylab=expression(paste("Expected return ", mu[p])),col="steelblue")
+text(x=sigma_bmv, y=mu_bmv, labels="<- BMV (100%)", pos=4)
+text(x=sigma_cemex, y=mu_cemex, labels="<- CEMEX (100%)", pos=4)
+abline(v = 0.11, col="red")
+text(x=0.11, y=0.25, labels="<- Portfolio with minimum risk", pos=4)
+```
